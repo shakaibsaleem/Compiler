@@ -2,12 +2,12 @@ def main():
 	'''tokeniser sample'''
 	with open('snippet.huc') as file:
 		stream = file.read()
+	# print(stream)
+	tokens = stream.splitlines()
+	print(tokens)
 
 	# tokens = stream.split(" ")
-	tokens = stream.splitlines()
-	new = [t.split(" ") for t in tokens]
-	# print(stream)
-	# print(tokens)
-	print(new)
+	# new = [t.split(" ") for t in tokens]
+	# print(new)
 
 main()
