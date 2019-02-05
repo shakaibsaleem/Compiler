@@ -1,34 +1,32 @@
-def main(filename):
-	'''tokeniser sample'''
-	with open(filename+'.huc') as file:
-		stream = file.read()
-
-	# tokens = stream.splitlines()
-	# new = [t.split(" ") for t in tokens]
-
+def removeTabs(stream):
 	new = ""
 	for i in range(len(stream)):
 		char = stream[i]
-
+		# ignore tab characters, keep rest
 		if char != '\t':
 			new = new + char
-	stream = new
-	
+	return new
+
+def removeCommentLines(stream):
 	new = ""
 	ignore = False
 	for i in range(len(stream)):
 		char = stream[i]
 
+		# detect when comment starts
 		if char == '#':
-			ignore = True
+			ignore = True # start ignoring input stream
+
+		# detect when comment block ends
 		if char == '\n' and ignore == True:
-			ignore = False
+			ignore = False # stop ignoring input stream
+		
+		# ignore input stram or not
 		if ignore == False:
 			new = new + char
-	stream = new
-	
-	# print(stream)
+	return new
 
+def removeBlockComments(stream):
 	new = ""
 	ignore = False
 	line = 1 # line counter
@@ -40,7 +38,7 @@ def main(filename):
 
 		# detect when comment block starts
 		if stream[i:i+2] == '/*':
-			ignore = True # start ignoting input stream
+			ignore = True # start ignoring input stream
 			start_line = line # record line number
 
 		# detect when comment block ends
@@ -55,9 +53,46 @@ def main(filename):
 			new = new + stream[i]
 
 	if ignore == True:
-		with open(filename + ".err",'w') as log:
-			log.write("%d - End of comment block (*/) is missing for the comment started in line %d" %(start_line,start_line))
-	stream = new
-	
-	# print(stream)
-main("snippet")
+		# if last detected comment block was not ended then error
+		writeError(start_line,"End of comment block (*/) is missing for the comment started in line %d" %start_line)
+
+	return new
+
+def writeError(line,message):
+	with open(filename + ".err",'a') as log:
+			log.write(str(line) + " - " + message + "\n")
+
+def main(filename):
+	'''tokeniser sample'''
+	with open(filename+'.huc') as file:
+		stream = file.read()
+
+	# tokens = stream.splitlines()
+	# new = [t.split(" ") for t in tokens]
+
+	stream = removeTabs(stream)
+	stream = removeCommentLines(stream)
+	stream = removeBlockComments(stream)
+
+	token_list = ['}', 'void', '!=', '>=', 'public', '[', '{', 'var', ',', 'let', 'private', '-', '++', '<', 'elseif', ']', '>', '!', '<=', '+', 'while', 'bool', ')', 'for', 'float', 'str', 'this', '&', 'else', 'constructor', 'call', 'return', '//', '==', 'class', 'method', '**', '%', ';', '(', '=', '.', '|', 'if', 'int', '/', 'function', '*']
+
+	tokens = stream.split()
+	# print(tokens)
+
+	unrecognised = list()
+	for t in tokens:
+		if t not in token_list:
+			unrecognised.append(t)
+
+	# print(unrecognised)
+	print(set(unrecognised)) # interpret these
+
+	symbol_table = dict()
+
+filename = "snippet"
+
+# initialise error file
+error_file = open(filename + ".err",'w')
+error_file.close()
+
+main(filename)
