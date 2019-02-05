@@ -1,14 +1,10 @@
-def main():
+def main(filename):
 	'''tokeniser sample'''
-	with open('snippet.huc') as file:
+	with open(filename+'.huc') as file:
 		stream = file.read()
-	# print(stream)
-	# tokens = stream.splitlines()
-	# print(tokens)
 
-	# tokens = stream.split(" ")
+	# tokens = stream.splitlines()
 	# new = [t.split(" ") for t in tokens]
-	# print(new)
 
 	new = ""
 	for i in range(len(stream)):
@@ -59,9 +55,9 @@ def main():
 			new = new + stream[i]
 
 	if ignore == True:
-		with open("Errors.txt",'w') as log:
-			log.write("End of comment block (*/) is missing for the comment started in line: %d" %start_line)
+		with open(filename + ".err",'w') as log:
+			log.write("%d - End of comment block (*/) is missing for the comment started in line %d" %(start_line,start_line))
 	stream = new
 	
 	# print(stream)
-main()
+main("snippet")
