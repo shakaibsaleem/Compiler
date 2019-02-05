@@ -1,0 +1,62 @@
+class Main
+{
+	# when program starts, this function is runs first
+	public function main ( )
+	{
+		var Sample s ;
+		let s = Sample . create ( 1 ) ;
+		var int x ;
+		for ( x = 0 ; x < 5 ; x ++ )
+		{
+			call s . add ( 2 ) ; # 2 is passed by val
+		}
+		let  x = s . get ( ) ;
+		if ( x < 10 )
+		{
+			while ( x < 20 )
+			{
+				let x = x + 3 ;
+			}
+		}
+		elseif ( x < 20 )
+		{
+			let x = x * x ;
+		}
+		else
+		{
+			let x = x ** x ;
+		}
+		# calling the static function sum from class Sample
+		let x = Sample . sum ( x , 1 ) ;
+		
+		var float [ 4 ] array ;
+		let array = { 1.0 , 2.0 , 3.0 , 4.0 } ;
+		let x = array [ 1 ] ; # array [ 1 ] refers to 1.0, not 2.0 because indexing in HUC starts from 1 instead of 0
+		return ;
+	}
+}
+
+class Sample
+{
+	field int a ;
+	
+	public constructor Sample create ( int arg )
+	{
+		let this . a = arg ;
+		return this ;
+	}
+	public method void add ( int num )
+	{
+		let this . a = this . a + num ;
+		return ;
+	}
+	public method int get ( )
+	{
+		return this . a ; # only way to access the value a is by this function
+	}
+	public function int sum ( int x , int y )
+	{
+		# a static function
+		return x + y ;
+	}
+}
