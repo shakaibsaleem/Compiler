@@ -1,6 +1,8 @@
 class Main
 {
 	# when program starts, this function is runs first
+	/* aaasdas
+	*/
 	public function main ( )
 	{
 		var Sample s ;
