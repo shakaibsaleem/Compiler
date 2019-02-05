@@ -8,6 +8,8 @@ class Main
 		var Sample s ;
 		let s = Sample . create ( 1 ) ;
 		var int x ;
+		var string c ;
+		let c = "aasds" ;
 		for ( x = 0 ; x < 5 ; x ++ )
 		{
 			call s . add ( 2 ) ; # 2 is passed by val
