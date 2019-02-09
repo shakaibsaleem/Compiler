@@ -1,24 +1,43 @@
+import re
+
 def removeTabs(stream):
 	new = ""
+	isString = False
 	for i in range(len(stream)):
 		char = stream[i]
+
+		if char == '"' :
+			if not isString:
+				isString = True
+			else:
+				isString = False
+
 		# ignore tab characters, keep rest
 		if char != '\t':
+			new = new + char
+		elif isString:
 			new = new + char
 	return new
 
 def removeCommentLines(stream):
 	new = ""
 	ignore = False
+	isString = False
 	for i in range(len(stream)):
 		char = stream[i]
 
+		if char == '"' :
+			if not isString:
+				isString = True
+			else:
+				isString = False
+
 		# detect when comment starts
-		if char == '#':
+		if char == '#' and not isString:
 			ignore = True # start ignoring input stream
 
 		# detect when comment block ends
-		if char == '\n' and ignore == True:
+		if char == '\n' and ignore == True and not isString:
 			ignore = False # stop ignoring input stream
 		
 		# ignore input stram or not
@@ -29,6 +48,7 @@ def removeCommentLines(stream):
 def removeBlockComments(stream):
 	new = ""
 	ignore = False
+	isString = False
 	line = 1 # line counter
 	start_line = 0 # to record which line our comment block started from
 
@@ -36,13 +56,19 @@ def removeBlockComments(stream):
 		if stream[i] == '\n':
 			line += 1 # count lines
 
+		if stream[i] == '"' :
+			if not isString:
+				isString = True
+			else:
+				isString = False
+
 		# detect when comment block starts
-		if stream[i:i+2] == '/*':
+		if stream[i:i+2] == '/*' and not isString:
 			ignore = True # start ignoring input stream
 			start_line = line # record line number
 
 		# detect when comment block ends
-		if stream[i-2:i] == '*/' and ignore == True:
+		if stream[i-2:i] == '*/' and ignore == True and not isString:
 			ignore = False # stop ignoring input stream
 
 		# ignore input stram or not
@@ -60,7 +86,7 @@ def removeBlockComments(stream):
 
 def writeError(line,message):
 	with open(filename + ".err",'a') as log:
-			log.write(str(line) + " - " + message + "\n")
+			log.write("Line: "+str(line) + " - " + message + "\n")
 
 def main(filename):
 	'''tokeniser sample'''
@@ -74,20 +100,145 @@ def main(filename):
 	stream = removeCommentLines(stream)
 	stream = removeBlockComments(stream)
 
-	token_list = ['}', 'void', '!=', '>=', 'public', '[', '{', 'var', ',', 'let', 'private', '-', '++', '<', 'elseif', ']', '>', '!', '<=', '+', 'while', 'bool', ')', 'for', 'float', 'str', 'this', '&', 'else', 'constructor', 'call', 'return', '//', '==', 'class', 'method', '**', '%', ';', '(', '=', '.', '|', 'if', 'int', '/', 'function', '*']
+	symbol_table = dict()
+	str_count = 0
+	no_strings = ""
+	isString = False
+	line = 1
+	start_line = 0
+	for i in range(len(stream)):
+		char = stream[i]
+		if char == '\n':
+			line += 1
+		if char == '"':
+			if not isString:
+				isString = True
+				current = ""
+				start_line = line
+			else:
+				isString = False
+				current += char
+				str_count += 1
+				symbol_table[current] = "STR,"+str(str_count)
+				continue
+		if not isString:
+			no_strings += char
+		else:
+			current += char
+	if isString:
+		writeError(start_line,'End of string literal (") is missing for the string started in line %d' %start_line)
 
-	tokens = stream.split()
+		#######################################################
+		######    ERROR RECOVERY STRATEGY NUMBER TWO     ######
+		#######################################################
+		current += '"' # inserting missing character
+
+		symbol_table[current] = "STR,"+str(str_count)
+
+	token_list = ['}', 'void', '!=', '>=', 'public', '[', '{', 'var', ',', 'let', 'private', '-', '++', '<', 'elseif', ']', '>', '!', '<=', '+', 'while', 'bool', ')', 'for', 'float', 'str', 'this', '&', 'else', 'constructor', 'call', 'return', '//', '==', 'class', 'method', '**', '%', ';', '(', '=', '.', '|', 'if', 'int', '/', 'function', '*', 'true', 'false']
+
+	tokens = no_strings.split()
 	# print(tokens)
 
 	unrecognised = list()
 	for t in tokens:
 		if t not in token_list:
 			unrecognised.append(t)
-
 	# print(unrecognised)
-	print(set(unrecognised)) # interpret these
+	# print(set(unrecognised)) # interpret these
 
-	symbol_table = dict()
+	######      HERE     #######
+	symbols = list(set(unrecognised))
+
+	int_count = 0
+	float_count = 0
+	id_count = 0
+
+	for s in symbols:
+		if isInt(s):
+			int_count += 1
+			symbol_table[s] = "INT,"+str(int_count)
+		elif isFloat(s):
+			float_count += 1
+			symbol_table[s] = "FLOAT,"+str(float_count)
+		elif isIdentifier(s):
+			id_count += 1
+			symbol_table[s] = "ID,"+str(id_count)
+		# else:
+		# 	print("Error",s)
+	
+	# for key, value in symbol_table.items():
+		# print(key+":",value)
+		# print(value,key)
+	# print(symbol_table)
+	# print(stream)
+	# input("\n?")
+
+	current = ""
+	out = ""
+	isString = False
+	ignore = False
+	line = 1
+	for i in range(len(stream)):
+		char = stream[i]
+
+		if char == '"' :
+			if not isString:
+				isString = True
+			else:
+				isString = False
+
+		if char.isspace() and not isString:
+			if current in token_list:
+				out += "<"+current+">"
+			elif current in symbol_table.keys():
+				out += "<"+symbol_table[current]+">"
+			elif current == "":
+				pass 
+			else:
+				writeError(line,"Illegal literal: "+current)
+
+				#######################################################
+				######    ERROR RECOVERY STRATEGY NUMBER ONE     ######
+				#######################################################
+				
+				# not inserting a token for current into out
+				# panic mode recovery: deleting characters
+
+			# print(current,line)
+			current = ""
+		else:
+			current += char
+
+		if char == '\n':
+			line += 1
+
+	with open(filename+'.out','w') as token_file:
+		token_file.write(out)
+	with open(filename+'.sym','w') as symbol_file:
+		for key,value in symbol_table.items():
+			symbol_file.write(value + "\t-\t" + key + '\n')
+
+def isIdentifier(arg):
+	pattern = re.compile('^[A-Za-z][A-Za-z0-9_]*$')
+	result = pattern.match(arg)
+	return bool(result)
+
+def isFloat(arg):
+	pattern = re.compile('^([+-]?\d+\.\d+)([\e][+-]?[\d]+)?$')
+	result = pattern.match(arg)
+	return bool(result)
+
+def isInt(arg):
+	if len(arg) == 0:
+		return False
+	char = arg[0]
+	if char not in ["-","+",'0','1','2','3','4','5','6','7','8','9']:
+		return False
+	for char in arg[1:]:
+		if char not in ['0','1','2','3','4','5','6','7','8','9']:
+			return False
+	return True
 
 filename = "snippet"
 
