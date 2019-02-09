@@ -3,20 +3,25 @@ class Main
 	# when program starts, this function is runs first
 	/* aaasdas
 	*/
-	public function main ( )
+	public function void main ( )
 	{
 		var Sample s ;
 		let s = Sample . create ( 1 ) ;
 		var int x ;
 		var string c ;
-		let c = "aasds" ;
+		let c = "aasds vgsassa mnkfdkdsn" ;
 		for ( x = 0 ; x < 5 ; x ++ )
 		{
 			call s . add ( 2 ) ; # 2 is passed by val
 		}
 		let  x = s . get ( ) ;
 		if ( x < 10 )
-		{
+		{ "rrrrrrrrrrrrrrrrrrrrr" "jjj
+		# 	 
+		/*   
+		*/ 
+		$
+		" "ppppppppppppp"
 			while ( x < 20 )
 			{
 				let x = x + 3 ;
@@ -34,11 +39,22 @@ class Main
 		let x = Sample . sum ( x , 1 ) ;
 		
 		var float [ 4 ] array ;
-		let array = { 1.0 , 2.0 , 3.0 , 4.0 } ;
-		let x = array [ 1 ] ; # array [ 1 ] refers to 1.0, not 2.0 because indexing in HUC starts from 1 instead of 0
+		let array = { 51.0 , 52.0 , 5.3.0 , -54.5e+11 } ;
+		let x = array [ 1 ] ; # array [ 1 ] refers to 51.0, not 52.0 because indexing in HUC starts from 1 instead of 0
 		return ;
 	}
 }
+
+id1
+id_1
+1id
+_id
+id1_
+id_
+id%asasdas
+
+true
+false
 
 class Sample
 {
@@ -63,4 +79,9 @@ class Sample
 		# a static function
 		return x + y ;
 	}
+
+
+id%FFFFFFFs
+
+
 }
