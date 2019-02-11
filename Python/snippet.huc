@@ -16,12 +16,12 @@ class Main
 		}
 		let  x = s . get ( ) ;
 		if ( x < 10 )
-		{ "rrrrrrrrrrrrrrrrrrrrr" "jjj
+		{ "rrrrrrrrrrrrrrrrrrrrr" "StartOfWeirdString jjj
 		# 	 
 		/*   
 		*/ 
 		$
-		" "ppppppppppppp"
+		endOfWeirdString" "ppppppppppppp"
 			while ( x < 20 )
 			{
 				let x = x + 3 ;

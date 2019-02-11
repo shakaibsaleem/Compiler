@@ -1,0 +1,42 @@
+	public function void main ( )
+	{
+		vr Sample s ;
+		let s = Sample . create ( 1 ) ;
+		var int x ;
+		var string c ;
+		let c = "aasds vgsassa mnkfdkdsn" ;
+		for (( x = 0; x < 5 ; x ++ )
+		{
+			call s . add ( 2 ) ; # 2 is passed by val
+		}
+		caaaaall s . add ( 66);
+		return ;
+	}
+}
+
+class Sample
+{
+	field int a ;
+	field string er ;
+	
+	public constructor Sample create ( int arg )
+	{
+		let this . a = arg ;
+		let this . er = " abc ;
+		return this ;
+	}
+	public method void add ( int num )
+	{
+		let this . a = this . a + num ;
+		return ;
+	}
+	public method int get ( )
+	{
+		return this . a ; # only way to access the value a is by this function
+	}
+	public function int sum ( int x , int y )
+	{
+		# a static function
+		return x + y ;
+	}
+}

@@ -1,0 +1,136 @@
+class Main
+{
+    public function void Main ( )
+    {
+		var int length 
+		
+		let length = 4aaaaaaaa ;
+	
+		var floatAAAAAAA [ length ] unsorted ;
+		
+		let unsorted = { 3.0 , 6.0 , 4.0 , 2. } ;
+	
+		var float [ length ] sorted ;
+		
+		let sorted = MergeSort . sort ( unsorted , length ) ;
+		
+		var int i ;
+		
+		for ( i = 1 ; i <= length ; i ++ )
+		{
+			printFloat ( sorted [ i ] ) ; # printing float
+			printStr ( ", " ) ; # printing string
+		}
+		
+		return ;
+    }
+}
+
+class MergeSort
+{
+	public function float [ ] sort ( float list [ ] , int length )
+	{
+		if ( length > 1 )
+		{
+			var int start ;
+			var int end ;
+			var int mid ;
+			
+			let start = 1 ;
+			let end = length ;			
+			let mid  = ( start + end ) // 2 ;
+			
+			var float [ mid  ] left ;
+			var float [ end - mid ] right ;
+			
+			var int i ;
+			let i = 1 ;
+			
+			while ( i <= mid )
+			{
+				let left [ i ] = list [ i ] ;
+				let i = i + 1 ;
+			}
+			while ( i <= end )
+			{
+				let right [ i - mid ] = list [ i ] ;
+				let i = i + 1 ;
+			}
+			
+			let left = this . sort ( left , mid ) ;
+			let right = this . sort ( right , end - mid ) ;
+			
+			var float [ length ] sorted ;
+			let sorted = this . merge ( left , mid , right , end - mid ) ;
+			
+			return sorted ;
+		}
+		elseif ( length == 1 )
+		{
+			return list ;
+		}
+		else
+		{
+			printStr ( "Error" ) ;
+			return list ;
+		}
+	}
+	
+	public function float [ ] merge ( float left [ ] , int length_left , float right [ ] , int length_right )
+	{
+		var int i ;
+		var int length ;
+		var int l ;
+		var int r ;
+		
+		let length = length_left + length_right ;
+		
+		var float [ length ] merged ;
+		
+		let i = 1 ;
+		let l = 1 ;
+		let r = 1 ;
+		
+		var float val ;
+		
+		while ( i <= length & l <= length_left & r <= length_right )
+		{
+			if ( left [ l ] < right [ r ] )
+			{
+				let val = left [ l ] ;
+				let l = l + 1 ;
+			}
+			else
+			{
+				let val = right [ r ] ;
+				let r = r + 1 ;
+			}
+			let merged [ i ] = val ;
+			let i = i + 1 ;
+		}
+
+		if ( l <= length_left )
+		{
+			# copy from left to merged
+			while ( i <= length & l <= length_left )
+			{
+				let merged [ i ] = left [ l ] ;
+				let i = i + 1 ;
+				let l = l + 1 ;
+			}
+		}
+
+		if ( r <= length_right )
+		{
+			# copy from right to merged
+			while ( i <= length & r <= length_right )
+			{
+				let merged [ i ] = right [ r ] ;
+				let i = i + 1 ;
+				let r = r + 1 ;
+			}
+		}
+		
+		return merged ;
+	}
+}
