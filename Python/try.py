@@ -1,4 +1,5 @@
 import re
+import glob
 
 def removeTabs(stream):
 	new = ""
@@ -80,16 +81,21 @@ def removeBlockComments(stream):
 
 	if ignore == True:
 		# if last detected comment block was not ended then error
-		writeError(start_line,"End of comment block (*/) is missing for the comment started in line %d" %start_line)
+		writeError(start_line,"End of comment block (*/) is missing for the comment started in line %d" %start_line,filename)
 
 	return new
 
-def writeError(line,message):
-	with open(filename + ".err",'a') as log:
+def writeError(line,message,myfile):
+	with open(myfile + ".err",'a') as log:
 			log.write("Line: "+str(line) + " - " + message + "\n")
 
 def main(filename):
 	'''tokeniser sample'''
+
+	# initialise error file
+	error_file = open(filename + ".err",'w')
+	error_file.close()
+
 	with open(filename+'.huc') as file:
 		stream = file.read()
 
@@ -126,7 +132,7 @@ def main(filename):
 		else:
 			current += char
 	if isString:
-		writeError(start_line,'End of string literal (") is missing for the string started in line %d' %start_line)
+		writeError(start_line,'End of string literal (") is missing for the string started in line %d' %start_line,filename)
 
 		#######################################################
 		######    ERROR RECOVERY STRATEGY NUMBER TWO     ######
@@ -190,20 +196,20 @@ def main(filename):
 
 		if char.isspace() and not isString:
 			if current in token_list:
-				out += "<"+current+">"
+				out += "<"+current+">\n"
 			elif current in symbol_table.keys():
-				out += "<"+symbol_table[current]+">"
+				out += "<"+symbol_table[current]+">\n"
 			elif current == "":
 				pass 
 			else:
-				writeError(line,"Illegal literal: "+current)
+				writeError(line,"Illegal literal: '"+current+"'",filename)
 
 				#######################################################
 				######    ERROR RECOVERY STRATEGY NUMBER ONE     ######
 				#######################################################
 				
 				# not inserting a token for current into out
-				# panic mode recovery: deleting characters
+				# panic mode recovery: deleting characters till next recognisable token (basically till next separator character is found)
 
 			# print(current,line)
 			current = ""
@@ -240,10 +246,16 @@ def isInt(arg):
 			return False
 	return True
 
-filename = "snippet"
+# filename = "snippet"
+# filename = "MergeSort"
+# main(filename)
 
-# initialise error file
-error_file = open(filename + ".err",'w')
-error_file.close()
+def getFiles():
+	'''get list of all ".huc" files fron current directory'''
+	return glob.glob("*.huc")
 
-main(filename)
+files = getFiles()
+for filename in files:
+	# print(filename[:-4])
+	main(filename[:-4])
+
