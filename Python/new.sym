@@ -1,0 +1,37 @@
+ID,1	-	field
+ID,3	-	string
+STR,1	-	"aasds vgsassa mnkfdkdsn"
+STR,1	-	" abc ;
+		return this ;
+	}
+	public method void add ( int num )
+	{
+		let this . a = this . a + num ;
+		return ;
+	}
+	public method int get ( )
+	{
+		return this . a ; # only way to access the value a is by this function
+	}
+	public function int sum ( int x , int y )
+	{
+		# a static function
+		return x + y ;
+	}
+}
+"
+ID,5	-	arg
+ID,9	-	a
+ID,13	-	s
+INT,2	-	1
+ID,6	-	create
+ID,7	-	Sample
+ID,2	-	x
+INT,1	-	2
+ID,11	-	add
+ID,12	-	c
+ID,14	-	vr
+ID,8	-	main
+INT,3	-	5
+ID,10	-	er
+ID,4	-	caaaaall

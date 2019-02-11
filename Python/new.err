@@ -1,0 +1,4 @@
+Line: 25 - End of string literal (") is missing for the string started in line 25
+Line: 8 - Illegal literal: '(('
+Line: 8 - Illegal literal: '0;'
+Line: 12 - Illegal literal: '66);'
